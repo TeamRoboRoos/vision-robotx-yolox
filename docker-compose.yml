@@ -1,0 +1,48 @@
+version: '2.4'
+services:
+
+
+  # RUN with xhost +local:docker before hand
+  ros:
+    image: seal-ros2
+    build:
+        context: .
+        dockerfile: Dockerfile
+    network_mode: host
+    runtime: nvidia
+    ipc: host
+    volumes:
+      - .:/workspace/
+        #share your x11 socket and permissions to the container
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    privileged: true
+    environment:
+      - DISPLAY=$DISPLAY
+      # - DISPLAY=:0
+    devices:
+      - "/dev/video0:/dev/video0"
+    tty: true
+    command: bash ros2 launch yolox_ros_py yolox_nano_torch_cpu_camera.launch.py
+
+
+  nano:
+    image: seal-ros2
+    build:
+        context: .
+        dockerfile: Dockerfile.nano
+    platform: linux/arm64
+    network_mode: host
+    runtime: nvidia
+    ipc: host
+    volumes:
+      - .:/workspace/
+        #share your x11 socket and permissions to the container
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    privileged: true
+    environment:
+      - DISPLAY=$DISPLAY
+      # - DISPLAY=:0
+    devices:
+      - "/dev/video0:/dev/video0"
+    tty: true
+    command: bash ros2 launch yolox_ros_py yolox_nano_torch_cpu_camera.launch.py
