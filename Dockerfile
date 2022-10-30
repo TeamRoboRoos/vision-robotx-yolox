@@ -15,7 +15,7 @@ ENV LANG=en_US.UTF-8
 
 
 ARG PYTHON_VERSION=3.8
-RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+RUN pip install torch==1.12.1 torchvision==0.13.0 torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 # RUN pip install cmake
