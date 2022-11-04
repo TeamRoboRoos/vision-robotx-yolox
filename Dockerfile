@@ -29,5 +29,7 @@ RUN apt update && \
     python3 -m pip cache purge
 
 
+RUN pip install pyzmq
+
 ADD . /workspace/
 WORKDIR /workspace
