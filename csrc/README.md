@@ -15,7 +15,7 @@ make all
 ## Run
 
 For the client to work, the server needs to be running. 
-See the top level README on how to start that server.
+See the top level README on how to start that server properly.
 
 Run the server from a docker container or virtual environment with the following command:
 NOTE: This model is the standard model which is trained on every day objects.

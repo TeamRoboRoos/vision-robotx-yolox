@@ -54,7 +54,6 @@ BBoxes parse_bboxes(json_t *element)
 
     size_t i;
     size_t size = json_array_size(bboxes_json);
-    BBox *bboxes = malloc(size * (sizeof *bboxes));
     BBoxes result;
     result.num_boxes = size;
     for (i = 0; i < size; i++)
@@ -80,9 +79,6 @@ BBoxes parse_bboxes(json_t *element)
         // Put it into the BBox struct
         BBox bbox = {
             x1, y1, x2, y2, prob, class_id, class_name, image_width, image_height};
-        // printf("X1: %f Y1: %f X2: %f Y2: %f Prob:%f ClassName: %s Class Id: %i Image Width: %i Image Height: %i\n", bbox.x1, bbox.y1, bbox.x2, bbox.y2, bbox.prob, bbox.class_name, bbox.class_id, bbox.image_width, bbox.image_height);
-        bboxes[i] = bbox;
-        // printf("X1: %f  Y1: %f X2: %f Y2: %f Prob: %f Class: %s\n", bboxes[i].x1, bboxes[i].y1, bboxes[i].x2, bboxes[i].y2, bboxes[i].prob, bboxes[i].class_name);
         result.bboxes[i] = bbox;
     }
 
@@ -130,7 +126,7 @@ int main()
 
     while (1)
     {
-        char *topic = json_recv(subscriber); 
+        char *topic = json_recv(subscriber);
         char *msg = json_recv(subscriber);
 
         if (strcmp(topic, "bboxes") == 0)
