@@ -49,6 +49,26 @@ services:
     command: python3 inference_client.py
 
 
+  yolox-c:
+    image: seal-yolox-c
+    build:
+        context: .
+        dockerfile: Dockerfile.c.example
+    network_mode: host
+    ipc: host
+    ports:
+      - 5001:5001
+    volumes:
+      - .:/workspace/
+        #share your x11 socket and permissions to the container
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    privileged: true
+    environment:
+      - DISPLAY=$DISPLAY
+      # - DISPLAY=:0
+      - QT_DEBUG_PLUGINS=1
+    tty: true
+
   # RUN with xhost +local:docker before hand
   ros:
     image: seal-ros2

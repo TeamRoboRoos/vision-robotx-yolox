@@ -1,0 +1,15 @@
+FROM dkimg/opencv:4.6.0-ubuntu
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y vim git tmux bash-completion sudo locales curl gnupg2 lsb-release python3-argcomplete  python3-pip
+RUN apt-get install -y libzmq3-dev libjansson-dev gcc g++ make
+RUN locale-gen en_US en_US.UTF-8
+RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+
+
+ADD . /workspace/
+WORKDIR /workspace

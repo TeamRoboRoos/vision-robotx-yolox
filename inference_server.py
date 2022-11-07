@@ -227,10 +227,11 @@ def build_bbox_msg(outputs, img_info, cls_names):
         }
 
     bboxes = []
-    for res in outputs[0]:
-        # outputs[0] as there is only 1 image being proccessed at a time
-        bbox = format_bbox(res.cpu())
-        bboxes.append(bbox)
+    if outputs[0] is not None:
+        for res in outputs[0]:
+            # outputs[0] as there is only 1 image being proccessed at a time
+            bbox = format_bbox(res.cpu())
+            bboxes.append(bbox)
 
     return {
         "bboxes": bboxes,
