@@ -96,6 +96,8 @@ Once you have the image, start the container using the helper script and run as 
 ./start-nano-server.sh -v $(pwd):/workspace/ --run python3 inference_server.py  -f exps/default/robotx_nano.py --device gpu --fp16 -c ./weights/robotx_weights-v1.pth --conf 0.25 --nms 0.45 --img_size 640
 ```
 This will ask for the sudo password as it requires accessing / passing through some devices.
+NOTE: `-v $(pwd):/workspace/` this flag will overwrite the local version of the code and expects you to be in the top level directory of this repository. If you remove this flag, it will default to using the embedded version of the code which was stored in the docker image/container.
+
 
 If you have permissions issues, make sure the script has the execution permmissions as follows:
 ```
@@ -120,4 +122,49 @@ Push the newly build container to the docker hub registry:
 docker push adrianjohnstonaus/roboseals-nano-server:latest
 ```
 
+
+
+## Notes on the start-nano-server.sh
+
+This script is used to make executing the docker command easy. 
+It handles passing X11 and required environment variables needed to visualise the outputs on the device (useful for testing). 
+
+It first forwards the xhost:
+```
+sudo xhost +si:localuser:root
+```
+Then enables SSH X11 fowarding:
+```
+XAUTH=/tmp/.docker.xauth
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+chmod 777 $XAUTH
+```
+
+Finally it then runs the command:
+```
+sudo docker run --runtime nvidia -it --rm --network host -e DISPLAY=$DISPLAY \
+    -v /tmp/.X11-unix/:/tmp/.X11-unix \
+    -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
+    --privileged \
+    --device /dev/video0:/dev/video0 \
+    -p 5001:5001 \
+    $USER_VOLUME $CONTAINER_IMAGE $USER_COMMAND
+```
+
+Where `$USER_VOLUME`, `$CONTAINER_IMAGE`, `$USER_COMMAND` can be passed in to overwrite defaults.
+
+If `$USER_COMMAND` is empty, it will default to the container default. 
+
+### Updating the mounted camera device
+
+In the above command, it is possible to change the device mounting by changing:
+```
+--device /dev/video0:/dev/video0
+```
+to something like:
+```
+--device /dev/video1:/dev/video0
+```
+
+This will instead mount `/dev/video1` to the container devices of `/dev/video0`
 
