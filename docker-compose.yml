@@ -22,7 +22,7 @@ services:
       # - DISPLAY=:0
       - QT_DEBUG_PLUGINS=1
     devices:
-      - "/dev/video2:/dev/video0"
+      - "/dev/video0:/dev/video0"
     tty: true
     command: python3 inference_server.py  -f exps/default/yolox_nano.py --device gpu -c ./weights/yolox_nano.pth --conf 0.25 --nms 0.45 --img_size 640 --classmap COCO --publish_images
   

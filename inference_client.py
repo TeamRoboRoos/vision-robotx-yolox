@@ -100,7 +100,7 @@ def main(args):
             if topic == "bboxes":
                 # Then recieve the json blob
                 msg = socket.recv_json()
-                logger.info(f"BBoxes Msg: {topic}, Num Boxes - {msg['num_bboxes']}")
+                logger.info(f"BBoxes Msg: {topic}, Num Boxes - {msg['bboxes']}")
 
                 bboxes = msg['bboxes']
                 classes = msg['class_names']

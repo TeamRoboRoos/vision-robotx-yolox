@@ -254,18 +254,12 @@ def run_inference(predictor, vis_folder, current_time, args):
     socket.bind(address)
 
     cap = cv2.VideoCapture(args.path if args.mode == "video" else args.camid)
-    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float
-    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float
-    fps = cap.get(cv2.CAP_PROP_FPS)
-
-
 
     while True:
         ret_val, frame = cap.read()
 
         if ret_val:
             
-            frame = cv2.resize(frame, (640, 480), interpolation =cv2.INTER_AREA)
             outputs, img_info = predictor.inference(frame)
             json_msg = build_bbox_msg(outputs,
                                       img_info,
@@ -280,6 +274,7 @@ def run_inference(predictor, vis_folder, current_time, args):
 
             if args.publish_images:
                 logger.info(f"Sending Image: {frame.shape}")
+                frame = cv2.resize(frame, (640, 480), interpolation =cv2.INTER_AREA)
                 socket.send_string(args.img_topic, flags=zmq.SNDMORE)
                 send_image(socket, img=frame, copy=False)
 
