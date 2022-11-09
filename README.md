@@ -76,5 +76,29 @@ Note: this is a bit older and will the client and server code in one process.
 It is useful for testing.
 
 ```
-python3 tools/interative_inference.py  -f exps/default/yolox_nano.py --device gpu -c ./weights/yolox_nano.pth --conf 0.25 --nms 0.45 --img_size 640 --classmap COCO
+python3 tools/interative_inference.py  -f exps/default/yolox_nano.py --device gpu -c ./weights/yolox_nano.pth --conf 0.25 --nms 0.45 --img_size 640 --classmap COCO --fp16
 ```
+
+
+# JETSON NANO
+
+## Running Server on Nano
+
+To run the server on the nano, it requires you to either build the container (see below) or to pull the latest docker container image from the docker hub. It is recommended to pull the latest image as follows:
+```
+docker pull ...
+```
+
+Once you have the image, start the container and run as follows:
+
+```
+docker run --rm -it --gpus all --ipc=host -p 5001:5001 -v $(pwd):/workspace/ -v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY --device /dev/video0:/dev/video0  seal-nano bash
+```
+
+## Building docker on nano
+
+NOTE: This is only fo Building the container
+```
+docker build -f ./Dockerfile.nano -t seal-nano:latest .
+```
+

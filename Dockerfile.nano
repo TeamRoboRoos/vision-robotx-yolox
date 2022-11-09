@@ -1,0 +1,67 @@
+ARG FROM_IMAGE=dustynv/ros:foxy-ros-base-l4t-r32.6.1
+FROM $FROM_IMAGE
+
+ARG PYTORCH_URL=https://nvidia.box.com/shared/static/fjtbno0vpo676a25cgvuqc1wty0fkkg6.whl
+ARG PYTORCH_WHL=torch-1.10.0-cp36-cp36m-linux_aarch64.whl
+ARG ROS_DISTRO=foxy
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get install -y git locales curl gnupg2 lsb-release python3-argcomplete
+RUN locale-gen en_US en_US.UTF-8
+RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+
+#RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+#RUN sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+
+#
+# install prerequisites (many of these are for numpy)
+#
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-dev \
+        libopenblas-dev \
+        libopenmpi-dev \
+        openmpi-bin \
+        openmpi-common \
+        gfortran \
+        libomp-dev \
+        guvcview \
+        libsm6 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN pip3 install --no-cache-dir setuptools Cython wheel
+RUN pip3 install --no-cache-dir --verbose numpy
+
+RUN wget --quiet --show-progress --progress=bar:force:noscroll --no-check-certificate ${PYTORCH_URL} -O ${PYTORCH_WHL} && \
+    pip3 install --no-cache-dir --verbose ${PYTORCH_WHL}
+
+RUN pip3 install gdown
+RUN gdown https://drive.google.com/uc?id=1C7y6VSIBkmL2RQnVy8xF9cAnrrpJiJ-K && pip3 install torchvision-0.11.0a0+fa347eb-cp36-cp36m-linux_aarch64.whl
+
+RUN pip3 install scikit-build loguru
+RUN pip3 install thop ninja 
+RUN pip3 install tabulate  
+
+RUN pip3 install protobuf==4.0.0rc2
+
+# RUN pip3 install opencv_python  
+RUN pip3 install pycocotools>=2.0.2 tqdm
+#INSTALL ONNXRUNTIME
+# RUN wget https://nvidia.box.com/shared/static/jy7nqva7l88mq9i8bw3g3sklzf4kccn2.whl -O onnxruntime_gpu-1.10.0-cp36-cp36m-linux_aarch64.whl && pip3 install onnxruntime_gpu-1.10.0-cp36-cp36m-linux_aarch64.whl
+RUN wget https://nvidia.box.com/shared/static/bfs688apyvor4eo8sf3y1oqtnarwafww.whl -O onnxruntime_gpu-1.8.0-cp36-cp36m-linux_aarch64.whl && pip3 install onnxruntime_gpu-1.8.0-cp36-cp36m-linux_aarch64.whl
+RUN pip3 install yolox --no-deps
+
+
+RUN pip3 install pyzmq
+
+RUN pip3 install catkin_pkg && \
+    pip3 install empy && \
+    pip3 install lark
+
+
+ADD . /workspace/
+WORKDIR /workspace
