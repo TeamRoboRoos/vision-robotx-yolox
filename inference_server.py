@@ -257,22 +257,15 @@ def run_inference(predictor, vis_folder, current_time, args):
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float
     fps = cap.get(cv2.CAP_PROP_FPS)
-    if args.save_result:
-        save_folder = os.path.join(
-            vis_folder, time.strftime("%Y_%m_%d_%H_%M_%S", current_time))
-        os.makedirs(save_folder, exist_ok=True)
-        if args.mode == "video":
-            save_path = os.path.join(save_folder, os.path.basename(args.path))
-        else:
-            save_path = os.path.join(save_folder, "camera.mp4")
-        logger.info(f"video save_path is {save_path}")
-        vid_writer = cv2.VideoWriter(save_path,
-                                     cv2.VideoWriter_fourcc(*"mp4v"), fps,
-                                     (int(width), int(height)))
+
+
 
     while True:
         ret_val, frame = cap.read()
+
         if ret_val:
+            
+            frame = cv2.resize(frame, (640, 480), interpolation =cv2.INTER_AREA)
             outputs, img_info = predictor.inference(frame)
             json_msg = build_bbox_msg(outputs,
                                       img_info,

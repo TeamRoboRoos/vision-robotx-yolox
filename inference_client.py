@@ -18,7 +18,7 @@ def build_arg_parser():
 
     # Netowkring arguments
     parser.add_argument("--host",
-                        default="*",
+                        default="127.0.0.1",
                         help="The host IP. Defaults to *")
 
     parser.add_argument("--publish_port",
@@ -64,7 +64,7 @@ def visualise(cls_names, json_bboxes, img, cls_conf=0.35, ratio=1):
     scores = torch.FloatTensor(scores).squeeze(1)
    
     # preprocessing: resize
-    bboxes /= ratio
+    # bboxes /= ratio
     
     vis_res = vis(img, bboxes, scores, cls, cls_conf, cls_names)
     return vis_res
@@ -72,22 +72,28 @@ def visualise(cls_names, json_bboxes, img, cls_conf=0.35, ratio=1):
 
 def main(args):
 
-    host = "127.0.0.1"
+    host = args.host
     port = "5001"
 
     # Creates a socket instance
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
 
+    address = "tcp://{}:{}".format(host, port)
     # Connects to a bound socket
-    socket.connect("tcp://{}:{}".format(host, port))
+    logger.info(f"Connecting to {address}")
+    socket.connect(address)
+    logger.info(f"Connected to {address}")
 
     # Subscribes to all topics
     socket.subscribe("")
+    logger.info(f"Subscribed to {address}")
 
     image, bboxes, classes = None, None, None
+    
     while True:
         try:
+    
             # First recieve the Topic
             topic = socket.recv_string()
 

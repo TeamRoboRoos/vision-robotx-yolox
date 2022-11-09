@@ -22,10 +22,10 @@ services:
       # - DISPLAY=:0
       - QT_DEBUG_PLUGINS=1
     devices:
-      - "/dev/video0:/dev/video0"
+      - "/dev/video2:/dev/video0"
     tty: true
-    command: python3 tools/demo.py webcam -f exps/default/yolox_nano.py -c ./weights/yolox_nano.pth --conf 0.25 --nms 0.45 --tsize 640 --device gpu
-
+    command: python3 inference_server.py  -f exps/default/yolox_nano.py --device gpu -c ./weights/yolox_nano.pth --conf 0.25 --nms 0.45 --img_size 640 --classmap COCO --publish_images
+  
   yolox-client:
     image: seal-yolox
     build:
@@ -97,8 +97,7 @@ services:
     build:
         context: .
         dockerfile: Dockerfile.nano
-    platform: linux/arm64
-      network_mode: host
+    network_mode: host
     runtime: nvidia
     ipc: host
     ports:
