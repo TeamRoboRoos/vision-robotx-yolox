@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CONTAINER_IMAGE="seal-nano:latest"
+CONTAINER_IMAGE="adrianjohnstonaus/roboseals-nano-server"
 
 USER_VOLUME=""
 USER_COMMAND=""

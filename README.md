@@ -5,10 +5,10 @@
  - [x] Detection model running
  - [x] Detection model server publishing to ZeroMQ
  - [x] Example client code for visualising boxes and images seperate from the server
- - [ ] Docker containers for Jetson Nano
- - [ ] Publish Jetson containers to a docker hub for pulling onto Jetson Nano
- - [ ] Have the Example server and client running on Jetson Nano
- - [ ] Have the Jetson nano automatically pull the newest container and start the server as a daemon. 
+ - [x] Docker containers for Jetson Nano
+ - [x] Publish Jetson containers to a docker hub for pulling onto Jetson Nano
+ - [x] Have the Example server and client running on Jetson Nano
+ - [x] Have the Jetson nano automatically pull the newest container and start the server as a daemon. 
 
 
 ## Building the Docker containers
@@ -35,7 +35,7 @@ docker-compose run --service-ports yolox bash
 
 Once connected to the containers, you can run with the RobotX model as follows:
 ```
-python3 inference_server.py  -f exps/default/robotx_nano.py --device gpu -c ./weights/robotx_weights-v1.pth --conf 0.25 --nms 0.45 --img_size 640
+python3 inference_server.py  -f exps/default/robotx_nano.py --device gpu --fp16 -c ./weights/robotx_weights-v1.pth --conf 0.25 --nms 0.45 --img_size 640
 ```
 
 For testing, it is recommeneded to run with the default model. E.g People, Cars etc. 
@@ -85,20 +85,39 @@ python3 tools/interative_inference.py  -f exps/default/yolox_nano.py --device gp
 ## Running Server on Nano
 
 To run the server on the nano, it requires you to either build the container (see below) or to pull the latest docker container image from the docker hub. It is recommended to pull the latest image as follows:
-```
-docker pull ...
-```
-
-Once you have the image, start the container and run as follows:
 
 ```
-docker run --rm -it --gpus all --ipc=host -p 5001:5001 -v $(pwd):/workspace/ -v /tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY=$DISPLAY --device /dev/video0:/dev/video0  seal-nano bash
+docker pull adrianjohnstonaus/roboseals-nano-server:latest
+```
+
+Once you have the image, start the container using the helper script and run as follows:
+
+```
+./start-nano-server.sh -v $(pwd):/workspace/ --run python3 inference_server.py  -f exps/default/robotx_nano.py --device gpu --fp16 -c ./weights/robotx_weights-v1.pth --conf 0.25 --nms 0.45 --img_size 640
+```
+This will ask for the sudo password as it requires accessing / passing through some devices.
+
+If you have permissions issues, make sure the script has the execution permmissions as follows:
+```
+chmod +x ./start-nano-server.sh
+```
+
+### Running the test/default model
+This command runs the server for the standard model e.g. Trained on everyday objects. It is useful for testing. 
+```
+./start-nano-server.sh -v $(pwd):/workspace/ --run python3 inference_server.py  -f exps/default/yolox_nano.py --device gpu --fp16 -c ./weights/yolox_nano.pth --conf 0.25 --nms 0.45 --img_size 640 --classmap COCO
 ```
 
 ## Building docker on nano
 
 NOTE: This is only fo Building the container
 ```
-docker build -f ./Dockerfile.nano -t seal-nano:latest .
+docker build -f ./Dockerfile.nano -t adrianjohnstonaus/roboseals-nano-server:latest .
 ```
+
+Push the newly build container to the docker hub registry:
+```
+docker push adrianjohnstonaus/roboseals-nano-server:latest
+```
+
 
