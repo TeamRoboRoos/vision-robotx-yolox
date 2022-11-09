@@ -188,7 +188,7 @@ class Predictor(object):
                                   self.confthre,
                                   self.nmsthre,
                                   class_agnostic=True)
-            # logger.info("Infer time: {:.4f}s".format(time.time() - t0))
+            logger.info("Infer time: {:.4f}s".format(time.time() - t0))
         return outputs, img_info
 
     def visualise(self, output, img_info, cls_conf=0.35):
@@ -277,8 +277,8 @@ def run_inference(predictor, vis_folder, current_time, args):
             json_msg = build_bbox_msg(outputs,
                                       img_info,
                                       cls_names=predictor.cls_names)
+            #logger.info(f"Inference time: {finish}s")
             #logger.info(f"Sending: {json_msg}")
-
             # First send the topic string with the flag to do send multpart.
             socket.send_string(args.bbox_topic, flags=zmq.SNDMORE)
 

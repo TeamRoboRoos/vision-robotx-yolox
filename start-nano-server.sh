@@ -115,4 +115,5 @@ sudo docker run --runtime nvidia -it --rm --network host -e DISPLAY=$DISPLAY \
     -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
     --privileged \
     --device /dev/video0:/dev/video0 \
+    -p 5001:5001 \
     $USER_VOLUME $CONTAINER_IMAGE $USER_COMMAND
