@@ -110,7 +110,7 @@ xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 chmod 777 $XAUTH
 
 # run the container
-sudo docker run --runtime nvidia -it --rm --network host -e DISPLAY=$DISPLAY \
+sudo docker run -d --name robotx-server --runtime nvidia -it --rm --network host -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix/:/tmp/.X11-unix \
     -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
     --privileged \
