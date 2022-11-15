@@ -48,8 +48,10 @@ def visualise(cls_names, json_bboxes, img, cls_conf=0.35, ratio=1):
     cls = []
     scores = [] 
     
-    if json_bboxes is None:
+    if len(json_bboxes) == 0:
         return img
+    
+    
     for bb in json_bboxes:
         bboxes.append(
             [bb['x1'], bb['y1'], bb['x2'], bb['y2']]
