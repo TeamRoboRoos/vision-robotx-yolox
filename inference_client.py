@@ -6,10 +6,7 @@ from argparse import ArgumentParser
 import zmq
 from image_zmq import recv_array, recv_image
 
-from yolox.data.data_augment import ValTransform
-from yolox.data.datasets import COCO_CLASSES
-from yolox.exp import get_exp
-from yolox.utils import fuse_model, get_model_info, postprocess, vis
+from visualise import vis
 from loguru import logger
 
 
